@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav class="navbar navbar-default" style="margin-top: 20px; border-color: #337ab7;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Navigatie</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ path('brewery_list') }}">Fust Finder</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                {{ form_start(searchForm, { attr: { class: "navbar-form navbar-right"} }) }}
+                <div class="form-group">
+                    {{ form_widget(searchForm.location, { attr: { class: "form-control", placeholder: "Locatie..." } }) }}
+                    {{ form_widget(searchForm.transportMode, { attr: { class: "form-control" } }) }}
+                </div>
+                {{ form_widget(searchForm.submit, { attr: { class: "form-control" } }) }}
+                {{ form_end(searchForm) }}
+            </div>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Brouwerijen</div>
+                <div class="list-group">
+                    {% for line in distances %}
+                        <button type="button" class="list-group-item brewery-button" data-breweryid="{{ line.brewery.id }}">
+                            <span class="badge"><span class="glyphicon glyphicon-road" aria-hidden="true"></span> {{ line.distance.text }}</span>
+                            <span class="badge"><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ line.duration.text }}</span>
+                            <h4 class="list-group-item-heading">{{ line.brewery.name }}</h4>
+                            <p class="list-group-item-text">{{ line.brewery.address }}, {{ line.brewery.city}}</p>
+                        </button>
+                    {% else %}
+                        <button type="button" class="list-group-item">
+                            <p class="list-group-item-text" style="text-align: center;">Voer een locatie in om brouwerijen te vinden.</p>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6" id="beer-list-container">
+            {% if distances %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Bieren</div>
+                    <p class="panel-body text-center">Kies een brouwerij voor meer informatie.</p>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Route</div>
+                    <p class="panel-body text-center">Kies een brouwerij voor meer informatie.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script type="text/javascript">
+        {% if submittedValues %}
+            submittedLocation = '{{ submittedValues.location }}';
+            submittedMode = '{{ submittedValues.transportMode }}';
+        {% endif %}
+
+        jQuery(document).ready(function () {
+            jQuery('.brewery-button').click(function () {
+                jQuery('.brewery-button').removeClass('active');
+                jQuery(this).addClass('active');
+                jQuery('#beer-list-container').load(
+                        '/brewery/'
+                        + jQuery(this).data('breweryid')
+                        + '/beers/'
+                        + encodeURI(submittedLocation)
+                        + '/' + submittedMode + '/'
+                );
+            });
+        });
+    </script>
+{% endblock %}

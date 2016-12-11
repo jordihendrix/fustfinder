@@ -1,9 +1,7 @@
-# Learn more about services, parameters and containers at
-# http://symfony.com/doc/current/service_container.html
-parameters:
-#    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    oberon_brewery_data:
+        class: AppBundle\Service\OberonBreweryData
+        arguments: ["@doctrine.orm.entity_manager"]
+    google_maps_distance_matrix:
+        class: AppBundle\Service\GoogleMapsDistanceMatrix
+        arguments: ['%google_maps_api_key%']

@@ -17,3 +17,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+    
+    # Google Maps API Key required for transit distance and embeds
+    google_maps_api_key: insert_key_here
